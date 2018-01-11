@@ -12,7 +12,7 @@ crawlAndDownload(10000);
 function crawlAndDownload(time) {
     let i = true;
 
-    var downloader = setInterval(() => {
+    let downloader = setInterval(() => {
         let toDownload = `https://dl.reseau-ges.fr/private/1973Lwmzzjna-Sp9W5gzM${new RandExp(/[\w-]{11}/).gen()}x_KvxH9QFt4`;
         download(toDownload);
     }, 500);
@@ -27,10 +27,7 @@ function crawlAndDownload(time) {
 }
 
 function download(url) {
-    var recus = 0;
-    var total = 0;
-
-    var req = Request({
+    let req = Request({
         method: 'GET',
         url: url,
         headers: {
@@ -41,7 +38,8 @@ function download(url) {
     let filepath = path.resolve(`./files/${new RegExp(/^.*\/(.*(\.?.*?)?)$/i).exec(url)[1]}`);
 
     req.on('response', function (data) {
-        total = parseInt(data.headers['content-length']);
+        let total = parseInt(data.headers['content-length']);
+
         if (data.statusCode == 404 || data.statusCode == 500) {
             console.log(`\x1b[31mFichier non trouvé : ${url}!\x1b[0m`);
             missedFiles++;
@@ -51,7 +49,7 @@ function download(url) {
             missedFiles++;
             return req.abort();
         } else {
-            let out = fs.createWriteStream(`filepath${mime.getExtension(data.headers['content-type'])}`);
+            let out = fs.createWriteStream(`${filepath}${mime.getExtension(data.headers['content-type'])}`);
             req.pipe(out);
 
             req.on('data', function (chunk) {
