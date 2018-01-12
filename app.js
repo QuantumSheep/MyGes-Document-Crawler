@@ -7,15 +7,20 @@ const mime = require('mime');
 let downloadFiles = 0;
 let missedFiles = 0;
 
-crawlAndDownload(10000);
+crawlAndDownload(1000000);
 
 function crawlAndDownload(time) {
-    let i = true;
+    let alreadyChecked = [];
+    let toDownload = "";
 
     let downloader = setInterval(() => {
-        let toDownload = `https://dl.reseau-ges.fr/private/1973Lwmzzjna-Sp9W5gzM${new RandExp(/[\w-]{11}/).gen()}x_KvxH9QFt4`;
+        do {
+            toDownload = `https://dl.reseau-ges.fr/private/1973Lwmzzjna-Sp9W5gzM${new RandExp(/[\w-]{11}/).gen()}x_KvxH9QFt4`;
+        } while(alreadyChecked.indexOf(toDownload) > -1);
+
+        alreadyChecked.push(alreadyChecked);
         download(toDownload);
-    }, 500);
+    }, 300);
 
     setTimeout(() => {
         clearInterval(downloader);
@@ -31,7 +36,7 @@ function download(url) {
         method: 'GET',
         url: url,
         headers: {
-            'Cookie': 'JSESSIONID=04FBB837649CCDE6D307598A212F6980'
+            'Cookie': 'JSESSIONID=1708BF5F4A519D66BEBC7687967E56B2'
         }
     });
 
@@ -39,6 +44,7 @@ function download(url) {
 
     req.on('response', function (data) {
         let total = parseInt(data.headers['content-length']);
+        let received = 0;
 
         if (data.statusCode == 404 || data.statusCode == 500) {
             console.log(`\x1b[31mFichier non trouvé : ${url}!\x1b[0m`);
@@ -53,7 +59,7 @@ function download(url) {
             req.pipe(out);
 
             req.on('data', function (chunk) {
-                recus += chunk.length;
+                received += chunk.length;
             });
 
             req.on('end', function () {
