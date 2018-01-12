@@ -49,7 +49,7 @@ function download(url) {
             missedFiles++;
             return req.abort();
         } else {
-            let out = fs.createWriteStream(`${filepath}${mime.getExtension(data.headers['content-type'])}`);
+            let out = fs.createWriteStream(`${filepath}.${mime.getExtension(data.headers['content-type'])}`);
             req.pipe(out);
 
             req.on('data', function (chunk) {
